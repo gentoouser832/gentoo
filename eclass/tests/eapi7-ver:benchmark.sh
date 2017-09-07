@@ -39,7 +39,6 @@ replacing() {
 		version_rs 3-5 _ 4-6 - a1b2c3d4e5
 		version_rs 1 - .1.2.3
 		version_rs 0 - .1.2.3
-		version_rs 3 . 1.2.3
 	done >/dev/null
 }
 

@@ -27,11 +27,17 @@ case ${EAPI:-0} in
 		die "${ECLASS}: EAPI=${EAPI} unknown";;
 esac
 
+# USAGE: <range> <max>
 _version_parse_range() {
+	local max_end=${2}
 	[[ ${1} == [0-9]* ]] || die
 	start=${1%-*}
 	[[ ${1} == *-* ]] && end=${1#*-} || end=${start}
-	[[ ${start} -ge 0 && ( -z ${end} || ${start} -le ${end} ) ]] || die
+	[[ ${start} -ge 0 ]] || die
+	if [[ ${end} ]]; then
+		[[ ${start} -le ${end} ]] || die
+		[[ ${end} -le ${max_end} ]] || die
+	fi
 }
 
 # RETURNS:
@@ -60,8 +66,9 @@ version_cut() {
 	local start end
 	local -a comp
 
-	_version_parse_range "$1"
 	_version_split "${2-${PV}}"
+	local max_end=$((${#comp[@]}/2))
+	_version_parse_range "$1" "${max_end}"
 
 	local IFS=
 	if [[ ${start} -gt 0 ]]; then
@@ -79,10 +86,11 @@ version_rs() {
 	local -a comp
 
 	(( $# & 1 )) && _version_split "${@: -1}" || _version_split "${PV}"
+	local max_end=$((${#comp[@]}/2 - 1))
 
 	while [[ $# -ge 2 ]]; do
-		_version_parse_range "$1"
-		[[ ${end} && ${end} -le $((${#comp[@]}/2)) ]] || end=$((${#comp[@]}/2 - 1))
+		_version_parse_range "$1" "${max_end}"
+		[[ ${end} ]] || end=${max_end}
 		for (( i = start*2; i <= end*2; i+=2 )); do
 			comp[i]=$2
 		done
