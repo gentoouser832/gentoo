@@ -37,6 +37,8 @@ _version_parse_range() {
 	if [[ ${end} ]]; then
 		[[ ${start} -le ${end} ]] || die
 		[[ ${end} -le ${max_end} ]] || die
+	else
+		end=${max_end}
 	fi
 }
 
@@ -74,11 +76,7 @@ version_cut() {
 	if [[ ${start} -gt 0 ]]; then
 		start=$(( start*2 - 1 ))
 	fi
-	if [[ ${end} ]]; then
-		echo "${comp[*]:start:end*2-start}"
-	else
-		echo "${comp[*]:start}"
-	fi
+	echo "${comp[*]:start:end*2-start}"
 }
 
 version_rs() {
@@ -90,7 +88,6 @@ version_rs() {
 
 	while [[ $# -ge 2 ]]; do
 		_version_parse_range "$1" "${max_end}"
-		[[ ${end} ]] || end=${max_end}
 		for (( i = start*2; i <= end*2; i+=2 )); do
 			comp[i]=$2
 		done
