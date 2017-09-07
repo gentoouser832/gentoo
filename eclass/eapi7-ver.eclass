@@ -50,7 +50,8 @@
 # A range can be specified as 'm' for m-th version component, 'm-'
 # for all components starting with m-th or 'm-n' for components starting
 # at m-th and ending at n-th (inclusive). It is an error to specify
-# a range spanning past the last component.
+# a range spanning past the last or before the first component
+# or separator appropriately.
 
 case ${EAPI:-0} in
 	0|1|2|3|4|5)
@@ -63,25 +64,27 @@ esac
 
 # @FUNCTION: _version_parse_range
 # @INTERNAL
-# @USAGE: <range> <max>
+# @USAGE: <range> <min> <max>
 # @DESCRIPTION:
 # Parse the range string <range>, setting 'start' and 'end' variables
-# to the appropriate bounds. <max> specifies the last valid component
-# index, i.e. upper bound for the range. The lower bound is fixed at 0.
+# to the appropriate bounds. <min> and <max> specify the appropriate
+# lower and upper bound for the range; specifying a range outside
+# these bounds is an error.
 _version_parse_range() {
 	local range=${1}
-	local max_end=${2}
+	local min=${2}
+	local max=${3}
 
 	[[ ${range} == [0-9]* ]] || die "${FUNCNAME}: range must start with a number"
 	start=${range%-*}
 	[[ ${range} == *-* ]] && end=${range#*-} || end=${start}
-	[[ ${start} -ge 0 ]] || die "${FUNCNAME}: start of range must be >= 0"
-	[[ ${start} -le ${max_end} ]] || die "${FUNCNAME}: start of range reaches past version string"
+	[[ ${start} -ge ${min} ]] || die "${FUNCNAME}: start of range must be >= 0"
+	[[ ${start} -le ${max} ]] || die "${FUNCNAME}: start of range reaches past version string"
 	if [[ ${end} ]]; then
 		[[ ${start} -le ${end} ]] || die "${FUNCNAME}: end of range must be >= start"
-		[[ ${end} -le ${max_end} ]] || die "${FUNCNAME}: end of range reaches past version string"
+		[[ ${end} -le ${max} ]] || die "${FUNCNAME}: end of range reaches past version string"
 	else
-		end=${max_end}
+		end=${max}
 	fi
 }
 
@@ -127,8 +130,9 @@ version_cut() {
 	local -a comp
 
 	_version_split "${v}"
-	local max_end=$((${#comp[@]}/2))
-	_version_parse_range "${range}" "${max_end}"
+	local min max=$((${#comp[@]}/2))
+	[[ ${comp[0]} ]] && min=0 || min=1
+	_version_parse_range "${range}" "${min}" "${max}"
 
 	local IFS=
 	if [[ ${start} -gt 0 ]]; then
@@ -154,10 +158,11 @@ version_rs() {
 	local -a comp
 
 	_version_split "${v}"
-	local max_end=$((${#comp[@]}/2 - 1))
+	local min max=$((${#comp[@]}/2 - 1))
+	[[ ${comp[0]} ]] && min=0 || min=1
 
 	while [[ ${#} -ge 2 ]]; do
-		_version_parse_range "${1}" "${max_end}"
+		_version_parse_range "${1}" "${min}" "${max}"
 		for (( i = start*2; i <= end*2; i+=2 )); do
 			comp[i]=${2}
 		done

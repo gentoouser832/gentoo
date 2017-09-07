@@ -25,6 +25,7 @@ txf() {
 }
 
 teq 1 version_cut 1 1.2.3
+teq 1 version_cut 1-1 1.2.3
 teq 1.2 version_cut 1-2 1.2.3
 teq 2.3 version_cut 2- 1.2.3
 teq 1.2.3 version_cut 1- 1.2.3
@@ -49,9 +50,12 @@ teq .1-2.3 version_rs 1 - .1.2.3
 teq -1.2.3 version_rs 0 - .1.2.3
 
 txf version_cut foo 1.2.3
+txf version_cut 0 1.2.3
+txf version_cut 0-2 1.2.3
 txf version_cut 2-5 1.2.3
 txf version_cut 4 1.2.3
 txf version_cut 4- 1.2.3
+txf version_rs 0 - 1.2.3
 txf version_rs -3 _ a1b2c3d4e5
 txf version_rs 5-3 _ a1b2c3d4e5
 txf version_rs 3 . 1.2.3
