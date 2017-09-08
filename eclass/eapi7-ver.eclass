@@ -167,3 +167,15 @@ ver_rs() {
 	local IFS=
 	echo "${comp[*]}"
 }
+
+# @FUNCTION: ver_test
+# @USAGE: [<v1>] <op> <v2>
+# @DESCRIPTION:
+# Check if the relation <v1> <op> <v2> is true. If <v1> is not specified,
+# default to ${PVR}. <op> can be -gt, -ge, -eq, -ne, -le, -lt.
+# Both versions must conform to the PMS version syntax (with optional
+# revision parts), and the comparison is performed according to
+# the algorithm specified in the PMS.
+ver_test() {
+	die "${FUNCNAME}: not implemented"
+}
