@@ -11,34 +11,34 @@ inherit eapi7-ver
 cutting() {
 	local x
 	for x in {1..1000}; do
-		version_cut 1 1.2.3
-		version_cut 1-2 1.2.3
-		version_cut 2- 1.2.3
-		version_cut 1- 1.2.3
-		version_cut 3-4 1.2.3b_alpha4
-		version_cut 5 1.2.3b_alpha4
-		version_cut 1-2 .1.2.3
-		version_cut 0-2 .1.2.3
-		version_cut 2-3 1.2.3.
-		version_cut 2- 1.2.3.
-		version_cut 2-4 1.2.3.
+		ver_cut 1 1.2.3
+		ver_cut 1-2 1.2.3
+		ver_cut 2- 1.2.3
+		ver_cut 1- 1.2.3
+		ver_cut 3-4 1.2.3b_alpha4
+		ver_cut 5 1.2.3b_alpha4
+		ver_cut 1-2 .1.2.3
+		ver_cut 0-2 .1.2.3
+		ver_cut 2-3 1.2.3.
+		ver_cut 2- 1.2.3.
+		ver_cut 2-4 1.2.3.
 	done >/dev/null
 }
 
 replacing() {
 	local x
 	for x in {1..1000}; do
-		version_rs 1 - 1.2.3
-		version_rs 2 - 1.2.3
-		version_rs 1-2 - 1.2.3.4
-		version_rs 2- - 1.2.3.4
-		version_rs 2 . 1.2-3
-		version_rs 3 . 1.2.3a
-		version_rs 2-3 - 1.2_alpha4
-		version_rs 3 - 2 "" 1.2.3b_alpha4
-		version_rs 3-5 _ 4-6 - a1b2c3d4e5
-		version_rs 1 - .1.2.3
-		version_rs 0 - .1.2.3
+		ver_rs 1 - 1.2.3
+		ver_rs 2 - 1.2.3
+		ver_rs 1-2 - 1.2.3.4
+		ver_rs 2- - 1.2.3.4
+		ver_rs 2 . 1.2-3
+		ver_rs 3 . 1.2.3a
+		ver_rs 2-3 - 1.2_alpha4
+		ver_rs 3 - 2 "" 1.2.3b_alpha4
+		ver_rs 3-5 _ 4-6 - a1b2c3d4e5
+		ver_rs 1 - .1.2.3
+		ver_rs 0 - .1.2.3
 	done >/dev/null
 }
 
