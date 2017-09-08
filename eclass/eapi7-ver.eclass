@@ -61,7 +61,7 @@ case ${EAPI:-0} in
 		die "${ECLASS}: EAPI=${EAPI} unknown";;
 esac
 
-# @FUNCTION: _version_parse_range
+# @FUNCTION: _ver_parse_range
 # @INTERNAL
 # @USAGE: <range> <max>
 # @DESCRIPTION:
@@ -69,7 +69,7 @@ esac
 # to the appropriate bounds. <min> and <max> specify the appropriate
 # lower and upper bound for the range; the user-specified value is
 # truncated to this range.
-_version_parse_range() {
+_ver_parse_range() {
 	local range=${1}
 	local max=${2}
 
@@ -84,14 +84,14 @@ _version_parse_range() {
 	fi
 }
 
-# @FUNCTION: _version_split
+# @FUNCTION: _ver_split
 # @INTERNAL
 # @USAGE: <version>
 # @DESCRIPTION:
 # Split the version string <version> into separator-component array.
 # Sets 'comp' to an array of the form: ( s_0 c_1 s_1 c_2 s_2 c_3... )
 # where s_i are separators and c_i are components.
-_version_split() {
+_ver_split() {
 	local v=${1} LC_ALL=C
 
 	comp=()
@@ -110,7 +110,7 @@ _version_split() {
 	done
 }
 
-# @FUNCTION: version_cut
+# @FUNCTION: ver_cut
 # @USAGE: <range> [<version>]
 # @DESCRIPTION:
 # Print the substring of the version string containing components
@@ -119,15 +119,15 @@ _version_split() {
 #
 # For the syntax of versions and ranges, please see the eclass
 # description.
-version_cut() {
+ver_cut() {
 	local range=${1}
 	local v=${2:-${PV}}
 	local start end
 	local -a comp
 
-	_version_split "${v}"
+	_ver_split "${v}"
 	local max=$((${#comp[@]}/2))
-	_version_parse_range "${range}" "${max}"
+	_ver_parse_range "${range}" "${max}"
 
 	local IFS=
 	if [[ ${start} -gt 0 ]]; then
@@ -136,7 +136,7 @@ version_cut() {
 	echo "${comp[*]:start:end*2-start}"
 }
 
-# @FUNCTION: version_rs
+# @FUNCTION: ver_rs
 # @USAGE: <range> <repl> [<range> <repl>...] [<version>]
 # @DESCRIPTION:
 # Print the version string after substituting the specified version
@@ -146,17 +146,17 @@ version_cut() {
 #
 # For the syntax of versions and ranges, please see the eclass
 # description.
-version_rs() {
+ver_rs() {
 	local v
 	(( ${#} & 1 )) && v=${@: -1} || v=${PV}
 	local start end i
 	local -a comp
 
-	_version_split "${v}"
+	_ver_split "${v}"
 	local max=$((${#comp[@]}/2 - 1))
 
 	while [[ ${#} -ge 2 ]]; do
-		_version_parse_range "${1}" "${max}"
+		_ver_parse_range "${1}" "${max}"
 		for (( i = start*2; i <= end*2; i+=2 )); do
 			[[ ${i} -eq 0 && -z ${comp[i]} ]] && continue
 			comp[i]=${2}
